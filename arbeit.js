@@ -1,12 +1,22 @@
+// arbeit.js — Result-Aktivator: Ergebnis zählt mehr als Zeit
+
 class Arbeit {
 
     constructor(){
-        this.stage = 3;          // Startstage
-        this.mode = "CALL";      // CALL oder RECALL
-        this.pipe = null;        // Pipeline-Name
-        this.result = null;      // Ergebnis
-        this.cplus = 1.0;        // c+ = Korrektor
-        this.mass = null;        // MassHW-Objekt
+        this.stage = 3;
+        this.mode = "CALL";
+        this.pipe = null;
+        this.result = null;
+        this.cplus = 1.0;
+        this.mass = null;
+
+        // Resultat-Ebene
+        this.resultMeta = {
+            valid: false,
+            empty: true,
+            priority: "RESULT",
+            flow: "NONE"
+        };
     }
 
     // c+ setzen
@@ -17,7 +27,15 @@ class Arbeit {
 
     // Stage setzen
     setStage(stage){
-        this.stage = stage * this.cplus;   // c+ wirkt hier
+        this.stage = stage * this.cplus;
+    }
+
+    // Ergebnis-Meta aktualisieren
+    updateResultMeta(){
+        this.resultMeta.valid = this.result !== null;
+        this.resultMeta.empty = this.result === null;
+        this.resultMeta.flow = this.mode === "CALL" ? "FORWARD" : "BACKWARD";
+        this.resultMeta.priority = "RESULT";
     }
 
     // CALL-Pipelines
@@ -42,6 +60,7 @@ class Arbeit {
                 throw new Error(`Unbekannte CALL-Pipeline: ${pipeName}`);
         }
 
+        this.updateResultMeta();
         return this.result;
     }
 
@@ -67,6 +86,7 @@ class Arbeit {
                 throw new Error(`Unbekannte RECALL-Pipeline: ${pipeName}`);
         }
 
+        this.updateResultMeta();
         return this.result;
     }
 
@@ -84,7 +104,8 @@ class Arbeit {
             stage: this.stage,
             result: this.result,
             cplus: this.cplus,
-            mass: this.mass
+            mass: this.mass,
+            resultMeta: this.resultMeta
         };
     }
 }
