@@ -7,3 +7,10 @@ LOAD: 9.tmp
 LOAD: TMP.tmp
 SYNC: TRUE
 STATE: READY
+.data = {
+        innen,
+        mech,
+        nano,
+        rein,
+        pipe9,
+        energy,
