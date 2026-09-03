@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A81 · Nano‑Ability‑Status</title>
+
+<style>
+  body {
+    background:#eef2f5;
+    font-family:-apple-system,Segoe UI,Roboto,sans-serif;
+    padding:20px;
+    display:flex;
+    justify-content:center;
+  }
+  .box {
+    width:380px;
+    background:#fff;
+    border:1px solid #d9dde3;
+    border-radius:10px;
+    padding:20px;
+  }
+  h1 { font-size:18px; margin-bottom:10px; }
+  .row {
+    display:flex;
+    justify-content:space-between;
+    padding:6px 0;
+    border-bottom:1px solid #f0f1f4;
+    font-size:14px;
+  }
+  canvas {
+    width:100%;
+    max-width:320px;
+    background:#fafbfc;
+    border:1px solid #e2e5eb;
+    border-radius:8px;
+    margin:14px 0;
+  }
+  button {
+    background:#1c2230;
+    color:#fff;
+    border:none;
+    border-radius:6px;
+    padding:8px 14px;
+    font-size:13px;
+    cursor:pointer;
+    margin-right:6px;
+  }
+  button:hover { background:#333c4f; }
+  .log {
+    height:140px;
+    overflow-y:auto;
+    background:#f9fafb;
+    border:1px solid #e2e5eb;
+    border-radius:8px;
+    padding:10px;
+    font-size:12px;
+    font-family:ui-monospace;
+  }
+</style>
+</head>
+<body>
+
+<div class="box">
+
+  <h1>A81‑Axis · Nano‑Ability</h1>
+
+  <!-- A81 / 9×9 / QI/IQQ/OCTA -->
+  <div class="row"><span>A81‑Slots</span><span id="a81">81</span></div>
+  <div class="row"><span>9×9‑Engine</span><span id="nine">9</span></div>
+  <div class="row"><span>QI/IQQ/OCTA</span><span id="qiocta">Aktiv</span></div>
+
+  <!-- 81.build / 81.rom / 81.scan -->
+  <div class="row"><span>81.build</span>
