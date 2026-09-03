@@ -2,123 +2,126 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>🪐 SATURN · 3 Ringe · balanciert</title>
+<title>AMIGA · MCFLY · Warp‑Gate</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
-    background:#0a0a0a;
+    background:#000;
     display:flex;
     justify-content:center;
     align-items:center;
     height:100vh;
+    overflow:hidden;
     font-family:sans-serif;
   }
   canvas {
-    background:#0a0a12;
-    border-radius:50%;
-    box-shadow: 0 0 60px rgba(100,200,255,0.15);
+    background:#000;
   }
 </style>
 </head>
 <body>
 
-<canvas id="saturn" width="500" height="500"></canvas>
+<canvas id="scene" width="700" height="400"></canvas>
 
 <script>
-  const canvas = document.getElementById('saturn');
-  const ctx = canvas.getContext('2d');
-  const cx = canvas.width/2, cy = canvas.height/2;
+const c = document.getElementById("scene");
+const ctx = c.getContext("2d");
 
-  // Ring‑Konfiguration
-  const rings = [
-    { radius: 80, color: '#ff4466', speed: -0.025, label: 'negativ' },
-    { radius: 130, color: '#44ccff', speed:  0.018, label: 'positiv' },
-    { radius: 180, color: '#66ff99', speed:  0.005, label: 'neutral' }
-  ];
+let cube = {
+  x: 120,
+  y: c.height/2,
+  size: 22,
+  scale: 1,
+  speed: 2.2,
+  entering: false,
+  alpha: 1,
+  warp: 0
+};
 
-  // Startwinkel für jeden Ring
-  let angles = rings.map(() => Math.random() * 2 * Math.PI);
+const gate = {
+  x: 520,
+  y: c.height/2,
+  r: 70,
+  wave: 0,
+  shimmer: 0
+};
 
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+function drawGate() {
+  gate.wave += 0.05;
+  gate.shimmer = Math.sin(gate.wave * 0.7) * 0.2 + 0.3;
 
-    // ─── Hintergrund‑Glow ────────────────────────────────────
-    const grad = ctx.createRadialGradient(cx, cy, 20, cx, cy, 220);
-    grad.addColorStop(0, 'rgba(180,220,255,0.04)');
-    grad.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  // Flüssige Membran
+  const grd = ctx.createRadialGradient(
+    gate.x, gate.y, gate.r * 0.1,
+    gate.x, gate.y, gate.r * 1.4
+  );
+  grd.addColorStop(0, `rgba(120,180,255,${gate.shimmer})`);
+  grd.addColorStop(0.4, `rgba(120,180,255,${gate.shimmer * 0.4})`);
+  grd.addColorStop(1, "rgba(0,0,0,0)");
 
-    // ─── Ringe zeichnen ──────────────────────────────────────
-    rings.forEach((ring, i) => {
-      const r = ring.radius;
-      const angle = angles[i];
+  ctx.fillStyle = grd;
+  ctx.beginPath();
+  ctx.arc(gate.x, gate.y, gate.r + Math.sin(gate.wave)*4, 0, Math.PI*2);
+  ctx.fill();
 
-      // Ring‑Linie (leicht leuchtend)
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, 2 * Math.PI);
-      ctx.strokeStyle = ring.color;
-      ctx.globalAlpha = 0.25;
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      ctx.globalAlpha = 1.0;
+  // Schimmernder Rand
+  ctx.strokeStyle = `rgba(180,220,255,${gate.shimmer})`;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(gate.x, gate.y, gate.r + Math.sin(gate.wave)*3, 0, Math.PI*2);
+  ctx.stroke();
+}
 
-      // Rotierender Punkt auf dem Ring (Satellit)
-      const x = cx + r * Math.cos(angle);
-      const y = cy + r * Math.sin(angle);
+function drawCube() {
+  ctx.save();
+  ctx.globalAlpha = cube.alpha;
 
-      // Punkt‑Glow
-      const glow = ctx.createRadialGradient(x, y, 2, x, y, 18);
-      glow.addColorStop(0, ring.color);
-      glow.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = glow;
-      ctx.beginPath();
-      ctx.arc(x, y, 18, 0, 2 * Math.PI);
-      ctx.fill();
+  const s = cube.size * cube.scale;
 
-      // Punkt‑Kern
-      ctx.beginPath();
-      ctx.arc(x, y, 6, 0, 2 * Math.PI);
-      ctx.fillStyle = '#fff';
-      ctx.shadowColor = ring.color;
-      ctx.shadowBlur = 20;
-      ctx.fill();
-      ctx.shadowBlur = 0;
+  // Warp‑Verzerrung
+  const warpOffset = Math.sin(cube.warp) * (cube.scale * 2);
 
-      // Kleine Beschriftung (entfernt, aber wir lassen die Ring‑Farben wirken)
-    });
+  ctx.fillStyle = "#44ccff";
+  ctx.fillRect(
+    cube.x - s/2 - warpOffset,
+    cube.y - s/2,
+    s + warpOffset*2,
+    s
+  );
 
-    // ─── Zentraler Planet ──────────────────────────────────────
-    const planetGrad = ctx.createRadialGradient(cx-10, cy-10, 5, cx, cy, 35);
-    planetGrad.addColorStop(0, '#fffbe6');
-    planetGrad.addColorStop(0.7, '#f7d44a');
-    planetGrad.addColorStop(1, '#b88a2a');
-    ctx.shadowColor = '#ffdd77';
-    ctx.shadowBlur = 40;
-    ctx.beginPath();
-    ctx.arc(cx, cy, 28, 0, 2 * Math.PI);
-    ctx.fillStyle = planetGrad;
-    ctx.fill();
-    ctx.shadowBlur = 0;
+  ctx.restore();
+}
 
-    // kleines Leuchten um den Planeten
-    const halo = ctx.createRadialGradient(cx, cy, 30, cx, cy, 55);
-    halo.addColorStop(0, 'rgba(255,220,100,0.15)');
-    halo.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = halo;
-    ctx.beginPath();
-    ctx.arc(cx, cy, 55, 0, 2 * Math.PI);
-    ctx.fill();
+function update() {
+  ctx.clearRect(0,0,c.width,c.height);
 
-    // ─── Winkel aktualisieren (unterschiedliche Richtungen) ──
-    rings.forEach((ring, i) => {
-      angles[i] += ring.speed;
-    });
+  drawGate();
+  drawCube();
 
-    requestAnimationFrame(draw);
+  if (!cube.entering) {
+    cube.x += cube.speed;
+
+    if (cube.x >= gate.x - gate.r) {
+      cube.entering = true;
+    }
+  } else {
+    cube.warp += 0.2;
+
+    // 4× Vergrößerung
+    if (cube.scale < 4) cube.scale += 0.12;
+
+    // Warp‑Fade
+    cube.alpha -= 0.025;
+
+    // Einsaugen
+    cube.x += 1.5;
+    cube.y += Math.sin(cube.x * 0.08) * 0.7;
   }
 
-  draw();
+  requestAnimationFrame(update);
+}
+
+update();
 </script>
 
 </body>
