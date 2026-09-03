@@ -1,38 +1,38 @@
-// gpu.raw.js
-// Roh‑Ebene der GPU: 3E‑Modus (Energie, Echo, Effekt)
-// Keine Shader‑Verstärkung, keine Narrative, keine Pipeline‑Boosts
+// rom.raw.js
+// Roh-Ebene des ROM: 3R-Modus (Read, Recall, Root)
+// Keine Verstärkung, keine Pipeline, keine GPU-Effekte
 
-export const gpuRAW = {
-    frame: 0,       // reine Frame‑Zählung
-    energy: 0,      // Grundkraft der GPU
-    echo: 0,        // Rückmeldung ohne Hall
-    effect: 0,      // unverstärkter Effekt
+export const romRAW = {
+    read: null,     // reiner Lesezugriff
+    recall: null,   // unverfälschte Erinnerung
+    root: null,     // Grundwert ohne Schwund
 
-    // Setzt die GPU in den Rohzustand
+    // ROM in den Rohzustand setzen
     reset() {
-        this.frame = 0;
-        this.energy = 0;
-        this.echo = 0;
-        this.effect = 0;
+        this.read = null;
+        this.recall = null;
+        this.root = null;
         return this;
     },
 
-    // Reines Rendering ohne c+, Shader, Echo/Hall
-    render() {
-        this.frame++;
-        this.energy = this.frame;
-        this.echo = Math.floor(this.frame / 4);
-        this.effect = Math.floor(this.frame / 12);
+    // Reiner ROM-Zugriff ohne Energie, ohne Echo, ohne Drift
+    access(value) {
+        this.read = value;
+        this.recall = value;
+        this.root = value;
         return {
-            frame: this.frame,
-            energy: this.energy,
-            echo: this.echo,
-            effect: this.effect
+            read: this.read,
+            recall: this.recall,
+            root: this.root
         };
     },
 
-    // Fair‑Order‑Check (Schiedsrichter‑Modus)
-    fair() {
-        return this.energy >= 0 && this.echo >= 0 && this.effect >= 0;
+    // Sicherheitscheck: ROM darf niemals Schwund haben
+    safe() {
+        return (
+            this.read === this.recall &&
+            this.recall === this.root &&
+            this.root !== undefined
+        );
     }
 };
