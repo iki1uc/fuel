@@ -16,5 +16,18 @@
       "flow": "our",
       "over": true
     }
+  },
+
+  "meta": {
+    "stage": 3,
+    "xyx": "center",
+    "goldeneSechs": {
+      "innen": "A81",
+      "mech": "zahnrad",
+      "nano": "a81/9",
+      "rein": "sqrt(a81)",
+      "energy": "delta",
+      "industry": ["pipe3", "pipe6", "pipe9", "pipe12"]
+    }
   }
 }
