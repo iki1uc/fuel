@@ -250,6 +250,10 @@ class MCFLY_Engine {
     this.tick();
     this.transwarp();
     this.pipeline(axis);
+// RUN 21 – Achse + Potenz synchronisieren
+const POTENZEN = [1, 3, 9, 27, 81, 243, 729];
+this.potenz = POTENZEN[this.step % POTENZEN.length];
+this.axis = ["d","e","i","n","o","r","s","u","w"][this.step % 9];
 
     // Globalen State aktualisieren
     state.a81 = this.a81;
