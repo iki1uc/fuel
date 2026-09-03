@@ -1,24 +1,9 @@
-TMP: /iki1uc/TMP/
-HDF: /iki1uc/HDF/
-
-HOME: /iki1uc/TMP/
-ORT: /iki1uc/HDF/
-USE: /iki1uc/HDF/
-USER: /iki1uc/TMP/
-
-LAGE: ANIME
-ROOM: NO1.room
-UROOM: raw
-ROOMC: anchor
-
-ARG: value
-XARG: pulse
-ARG3TE: drift
-ANGLE: 0°–360°
-
-STATE: tmp-active
-MODE: tmp-anchor
-
-BILDUNG: 81
-SLOTS: 81
-VECTOR-SLOT: anime-01
+VECTOR-SLOT: anime-01 (d)
+VECTOR-SLOT: anime-02 (e)
+VECTOR-SLOT: anime-03 (i)
+VECTOR-SLOT: anime-04 (n)
+VECTOR-SLOT: anime-05 (o)
+VECTOR-SLOT: anime-06 (r)
+VECTOR-SLOT: anime-07 (s)
+VECTOR-SLOT: anime-08 (u)
+VECTOR-SLOT: anime-09 (w)
