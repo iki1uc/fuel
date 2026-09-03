@@ -175,7 +175,46 @@ const state = {
 };
 
 // ================================================================
-// 2. ENGINE – pfadbasiert, mit allen Berechnungen
+// 2. PIPELINE‑SYSTEM (besser, kompakt, stabil)
+// ================================================================
+function computePipelines() {
+
+  // RUN21 Potenz
+  const POT = [1,3,9,27,81,243,729];
+  state.potenz = POT[state.step % POT.length];
+
+  // nano / rein / impuls
+  state.nano   = (state.a81 / 9).toFixed(2);
+  state.rein   = Math.sqrt(state.a81).toFixed(2);
+  state.impuls = state.step % 2 === 0 ? "KUCK" : "KUCK-KUCK";
+
+  // IQQ (9 ↔ 3)
+  state.iqq = (state.step % 2 === 0) ? 9 : 3;
+
+  // OCTA (0..7)
+  state.octa = state.step % 8;
+
+  // Pipeline 3
+  state.pipe3 = [
+    state.a81,
+    state.nano,
+    state.rein
+  ];
+
+  // Pipeline 6
+  state.pipe6 = [
+    state.a81,
+    state.nano,
+    state.rein,
+    state.impuls,
+    state.zahnrad,
+    state.axis
+  ];
+}
+
+ 
+// ================================================================
+// 3. ENGINE – pfadbasiert, mit allen Berechnungen
 // ================================================================
 class FuelEngine {
   constructor() {
@@ -196,49 +235,12 @@ class FuelEngine {
     state.zahnrad = (state.zahnrad + 1) % 12;
   }
 
-  // Hauptlauf
-  run() {
-    this.innen();
-    this.tick();
 
-    // Achse aus der Liste (rotierend)
-    state.axis = this.achsen[state.step % this.achsen.length];
-    state.qi = state.step % this.achsen.length;
-
-    // Potenz aus der Potenzliste
-    state.potenz = this.potenzen[state.step % this.potenzen.length];
-
-    // Ableitungen
-    state.nano = (state.a81 / 9).toFixed(2);
-    state.rein = Math.sqrt(state.a81).toFixed(2);
-    state.impuls = state.step % 2 === 0 ? "KUCK" : "KUCK-KUCK";
-
-    // IQQ: oszilliert 9 ↔ 3
-    state.iqq = (state.step % 2 === 0) ? 9 : 3;
-
-    // OCTA: Schritt mod 8
-    state.octa = state.step % 8;
-
-    // A81‑System‑Status (abhängig vom aktuellen A81-Wert)
-    state.a81Slots = state.a81;
-    state.nineEngine = state.a81 / 9;
-    state.buildStatus = state.a81 === 81 ? "OK" : "BUILD";
-    state.romStatus = state.a81 === 81 ? "OK" : "ROM";
-    state.scanStatus = state.step % 3 === 0 ? "SCAN OK" : "READY";
-    state.ankerStatus = state.a81 === 243 ? "Rär" : "Stabil";
-    state.tmpStatus = state.a81 === 3 ? "Reset" :
-                      state.a81 === 9 ? "Orbit" :
-                      state.a81 === 81 ? "Stabil" :
-                      state.a81 === 243 ? "Rär" : "Idle";
-
-    state.step++;
-  }
-}
 
 const engine = new FuelEngine();
 
 // ================================================================
-// 3. ORBIT‑RENDER (9 Achsen im Kreis)
+// 4. ORBIT‑RENDER (9 Achsen im Kreis)
 // ================================================================
 function drawOrbit() {
   const c = document.getElementById('orbitCanvas');
@@ -269,9 +271,56 @@ function drawOrbit() {
     ctx.fillText(a, x, y);
   });
 }
+run() {
+  this.innen();
+  this.tick();
+
+  state.axis = this.achsen[state.step % this.achsen.length];
+  state.qi   = state.step % this.achsen.length;
+
+  computePipelines();
+
+  state.step++;
+}
+// 5. STATE
+
+// 6. PIPELINE‑SYSTEM
+function computePipelines() {
+  // RUN21 Potenz
+  const POT = [1,3,9,27,81,243,729];
+  state.potenz = POT[state.step % POT.length];
+
+  // nano / rein / impuls
+  state.nano   = (state.a81 / 9).toFixed(2);
+  state.rein   = Math.sqrt(state.a81).toFixed(2);
+  state.impuls = state.step % 2 === 0 ? "KUCK" : "KUCK-KUCK";
+
+  // IQQ
+  state.iqq = (state.step % 2 === 0) ? 9 : 3;
+
+  // OCTA
+  state.octa = state.step % 8;
+
+  // Pipeline 3
+  state.pipe3 = [
+    state.a81,
+    state.nano,
+    state.rein
+  ];
+
+  // Pipeline 6
+  state.pipe6 = [
+    state.a81,
+    state.nano,
+    state.rein,
+    state.impuls,
+    state.zahnrad,
+    state.axis
+  ];
+}
 
 // ================================================================
-// 4. DISPLAY‑UPDATE
+// 7. DISPLAY‑UPDATE
 // ================================================================
 function updateDisplay() {
   document.getElementById('a81Display').textContent = state.a81;
@@ -297,7 +346,7 @@ function updateDisplay() {
 }
 
 // ================================================================
-// 5. LOG
+// 8. LOG
 // ================================================================
 function log(msg) {
   const t = new Date().toLocaleTimeString('de-DE');
@@ -307,7 +356,7 @@ function log(msg) {
 }
 
 // ================================================================
-// 6. STEUERUNG (Step, Loop, Stop, Reset)
+// 7. STEUERUNG (Step, Loop, Stop, Reset)
 // ================================================================
 let loopInterval = null;
 let loopActive = false;
@@ -370,7 +419,7 @@ function resetSystem() {
 }
 
 // ================================================================
-// 7. EVENT‑BINDING
+//9. EVENT‑BINDING
 // ================================================================
 document.getElementById('stepBtn').addEventListener('click', step);
 document.getElementById('loopBtn').addEventListener('click', startLoop);
@@ -378,7 +427,7 @@ document.getElementById('stopBtn').addEventListener('click', stopLoop);
 document.getElementById('resetBtn').addEventListener('click', resetSystem);
 
 // ================================================================
-// 8. START
+// 10. START
 // ================================================================
 updateDisplay();
 log('ALL NATURA · FUEL EDITION geladen.');
