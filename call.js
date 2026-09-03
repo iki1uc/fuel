@@ -1,14 +1,42 @@
+// call.activator.js — Callback · Trigger · Flow · GOLDENE SECHS
+
 class CallPipeline {
 
     constructor(){
         this.order = [3, 9, 81, 243, 729];
-        this.cplus = 1.0;   // c+ = Korrektor
+        this.cplus = 1.0;
+
+        this.triggered = false;
+        this.lastCall = null;
     }
 
     // c+ setzen
     setCPlus(value){
         this.cplus = value;
         return this.cplus;
+    }
+
+    // Callback-Aktivator
+    call(stage){
+        const current = stage * this.cplus;
+        const next = this.next(current);
+
+        const meta = {
+            frame: Date.now(),
+            stage: current,
+            next: next,
+            flow: "CALL-FLOW",
+            safe: next !== null
+        };
+
+        this.triggered = true;
+        this.lastCall = meta;
+
+        return {
+            pipe: "CALL-AKTIVATOR",
+            triggered: this.triggered,
+            meta
+        };
     }
 
     // HWpipeline (Grundlauf)
@@ -35,7 +63,7 @@ class CallPipeline {
             cplus: this.cplus
         };
     }
- 
+
     // HWpipeline12 (12 Schritte)
     pipeline12(stage){
         const chain = [];
@@ -50,7 +78,7 @@ class CallPipeline {
         return {
             pipe: "HWpipeline12",
             start: stage * this.cplus,
-            chain: chain,
+            chain,
             cplus: this.cplus
         };
     }
