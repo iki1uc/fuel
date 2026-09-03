@@ -1,29 +1,43 @@
 class StagePipeline {
 
     constructor(){
-        this.stages = [3, 9, 81, 243, 729];
+        // Vollständige Stages
+        this.stages = [3, 9, 81, 243, 729, 2187, 6561];
     }
 
-    // Prüft, ob Stage gültig ist
     isValid(stage){
         return this.stages.includes(stage);
     }
 
-    // Gibt die nächste Stage zurück
     next(stage){
         const index = this.stages.indexOf(stage);
         if(index === -1) throw new Error(`Ungültige Stage: ${stage}`);
         return this.stages[index + 1] || null;
     }
 
-    // Gibt die vorherige Stage zurück
     prev(stage){
         const index = this.stages.indexOf(stage);
         if(index <= 0) return null;
         return this.stages[index - 1];
     }
 
-    // Allgemeine Übergabe zwischen zwei Stages
+    // GOLDENE SECHS für jede Stage
+    meta(stage){
+        return {
+            innen: state.a81,
+            mech: state.zahnrad,
+            nano: state.a81 / 9,
+            rein: Math.sqrt(state.a81),
+            energy: TimeHW.delta,
+            industry: {
+                pipe3: A81_AXIS.pipe3,
+                pipe6: A81_AXIS.pipe6,
+                pipe9: A81_AXIS.pipe9,
+                pipe12: A81_AXIS.pipe12
+            }
+        };
+    }
+
     transfer(fromStage, data){
         if(!this.isValid(fromStage)){
             throw new Error(`Ungültige Stage: ${fromStage}`);
@@ -34,11 +48,11 @@ class StagePipeline {
         return {
             from: fromStage,
             to: toStage,
-            payload: data
+            payload: data,
+            meta: this.meta(fromStage)
         };
     }
 
-    // Pipeline-Durchlauf
     run(stage){
         if(!this.isValid(stage)){
             throw new Error(`Ungültige Stage: ${stage}`);
@@ -47,7 +61,8 @@ class StagePipeline {
         return {
             current: stage,
             next: this.next(stage),
-            prev: this.prev(stage)
+            prev: this.prev(stage),
+            meta: this.meta(stage)
         };
     }
 }
