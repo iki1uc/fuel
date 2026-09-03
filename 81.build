@@ -1,19 +1,28 @@
-import { scan9hoch9 } from "./81.scan";
-
-async function loadROM() {
-    const txt = await fetch("./81.rom").then(r => r.text());
-    const rom = {};
-    txt.split("\n").forEach(line => {
-        const [k, v] = line.split(":").map(s => s.trim());
-        if (k && v !== undefined) rom[k] = Number(v);
-    });
-    return Object.values(rom); // WICHTIG: Array erzeugen
+export function respoSlot(i, romValue) {
+    return {
+        value: romValue,
+        pulse: Math.sin(Date.now() / 120) * Math.random(),
+        drift: Math.cos(Date.now() / 240) + Math.random()*0.2,
+        angle: (Date.now() / 10 + romValue * 3) % 360
+    };
 }
 
-(async () => {
-    const romArray = await loadROM();
-    const result = scan9hoch9(romArray);
+export function scan9hoch9(rom) {
+    let ready = 0;
+    let errors = 0;
 
-    console.log("READY:", result.ready);
-    console.log("ERRORS:", result.errors);
-})();
+    for (let i = 0; i < 81; i++) {
+        const slot = respoSlot(i, rom[i]);
+
+        const ok =
+            slot.value >= -12 && slot.value <= 12 &&
+            Math.abs(slot.pulse) <= 1.2 &&
+            Math.abs(slot.drift) <= 1.2 &&
+            slot.angle >= 0 && slot.angle <= 360;
+
+        if (ok) ready++;
+        else errors++;
+    }
+
+    return { ready, errors };
+}
