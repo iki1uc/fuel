@@ -11,5 +11,14 @@
     },
     "wuerfel128": "core.mastermind",
     "pipeline": "cube.pipeline"
+  },
+
+  "balance": {
+    "innen": "A81",
+    "mech": "zahnrad",
+    "nano": "a81/9",
+    "rein": "sqrt(a81)",
+    "energy": "transwarp",
+    "industry": ["pipe3", "pipe6", "pipe9", "pipe12"]
   }
 }
