@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ALL NATURA · MCFLY_Engine · 3‑9‑81‑243</title>
+<title>ALL NATURA · ROTATIONAL ENGINE · RUN21</title>
 
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
@@ -90,228 +90,138 @@
 <div class="wrap">
 
 <header>
-  <h1>ALL NATURA · MCFLY_Engine</h1>
-  <p>Pfad: 3 → 9 → 81 → 243 → 81 → 9 → 3 · Orbit · Innen‑Lehre · Zahnrad</p>
+  <h1>ALL NATURA · ROTATIONAL ENGINE</h1>
+  <p>RUN21 · Achsen‑Rotation · Potenz‑Skalierung · Orbit‑Pfad</p>
 </header>
 
 <div class="grid">
 
   <div>
     <div class="card">
-      <h2>Natura‑Pfad (aktuell)</h2>
+      <h2>Rotational‑Status</h2>
+
       <div class="row"><span class="label">A81</span><span class="value" id="a81Display">81</span></div>
       <div class="row"><span class="label">Zahnrad</span><span class="value" id="zahnradDisplay">0</span></div>
-      <div class="row"><span class="label">Schritt</span><span class="value" id="stepDisplay">0</span></div>
-      <div class="row"><span class="label">nano (÷9)</span><span class="value" id="nanoDisplay">9</span></div>
-      <div class="row"><span class="label">rein (√)</span><span class="value" id="reinDisplay">9</span></div>
-      <div class="row"><span class="label">impuls</span><span class="value" id="impulsDisplay">KUCK</span></div>
-      <div class="row"><span class="label">Δt (ms)</span><span class="value" id="deltaDisplay">0</span></div>
-  <div class="row"><span class="label">Achse (RUN21)</span><span class="value" id="axisDisplay">-</span></div>
-  <div class="row"><span class="label">Potenz (RUN21)</span><span class="value" id="potenzDisplay">-</span></div>
+      <div class="row"><span class="label">Step</span><span class="value" id="stepDisplay">0</span></div>
 
-    
+      <div class="row"><span class="label">Achse (RUN21)</span><span class="value" id="axisDisplay">-</span></div>
+      <div class="row"><span class="label">Potenz (RUN21)</span><span class="value" id="potenzDisplay">-</span></div>
+
+      <div class="row"><span class="label">nano</span><span class="value" id="nanoDisplay">-</span></div>
+      <div class="row"><span class="label">rein</span><span class="value" id="reinDisplay">-</span></div>
+      <div class="row"><span class="label">impuls</span><span class="value" id="impulsDisplay">-</span></div>
+      <div class="row"><span class="label">Δt</span><span class="value" id="deltaDisplay">0</span></div>
+
     </div>
   </div>
 
   <div>
     <div class="card">
-      <h2>IQQ / A81‑Status</h2>
-      <div class="row"><span class="label">IQQ‑Zustand</span><span class="value" id="iqqDisplay">9</span></div>
-      <div class="row"><span class="label">TMP.tmp</span><span class="value" id="tmpDisplay">Stabil</span></div>
-      <div class="row"><span class="label">Scan</span><span class="value" id="scanDisplay">READY</span></div>
+      <h2>Orbit‑Rotation</h2>
+      <canvas id="orbitCanvas" width="400" height="400"></canvas>
+
+      <div class="btnrow">
+        <button id="stepBtn">Step</button>
+        <button id="loopBtn" class="secondary">▶ Loop</button>
+        <button id="stopBtn" class="secondary">⏹ Stop</button>
+        <button id="resetBtn" class="secondary">Reset</button>
+      </div>
     </div>
   </div>
 
 </div>
 
 <div class="card">
-  <h2>Orbit (OCTA‑Symbole)</h2>
-  <canvas id="orbitCanvas" width="400" height="400"></canvas>
-  <div class="btnrow">
-    <button id="stepBtn">Einzelschritt</button>
-    <button id="loopBtn" class="secondary">▶ Loop starten</button>
-    <button id="stopBtn" class="secondary">⏹ Stop</button>
-    <button id="resetBtn" class="secondary">Reset</button>
-  </div>
-</div>
-
-<div class="card">
-  <h2>Protokoll</h2>
-  <div class="log" id="logBox">Natura‑Dashboard geladen.</div>
+  <h2>Log</h2>
+  <div class="log" id="logBox">Rotational Engine geladen.</div>
 </div>
 
 </div>
 
 <script>
-// ================================================================
-// 1. STATE – die einzige Wahrheit
-// ================================================================
+/* ============================================================
+   STATE
+============================================================ */
 const state = {
   a81: 81,
   zahnrad: 0,
   step: 0,
-  iqq: 9,
-  tmp: "Stabil",
-  scan: "READY"
+  axis: "-",
+  potenz: "-",
+  nano: "-",
+  rein: "-",
+  impuls: "-",
+  delta: 0
 };
 
-// ================================================================
-// 2. Stubs für die benötigten externen Objekte
-// ================================================================
-const TimeHW = { delta: 0 };
+let lastTime = performance.now();
 
-const MassHWTranswarp = {
-  set: (nano, rein, delta) => {
-    // nur speichern, keine Berechnung
-  },
-  compute: () => {}
-};
+/* ============================================================
+   ENGINE
+============================================================ */
+class RotationalEngine {
 
-const Pipeline9 = {
-  useA81: (data) => {
-    // nur loggen, keine echte Pipeline
-    // console.log("Pipeline9:", data);
-  }
-};
-
-const A81_AXIS = {
-  build: () => {
-    return { pipe9: { status: "OK" } };
-  }
-};
-
-let lastTime = 0;
-function messen() {
-  const now = performance.now();
-  const delta = lastTime ? now - lastTime : 0;
-  lastTime = now;
-  TimeHW.delta = delta;
-  return { delta };
-}
-
-// ================================================================
-// 3. MCFLY_Engine (korrigiert, mit state-Rückgabe)
-// ================================================================
-class MCFLY_Engine {
   constructor() {
-    this.a81 = state.a81;
-    this.zahnrad = state.zahnrad;
-    this.step = state.step;
+    this.pfad = [3,9,81,243,81,9];
+    this.pfadIndex = 0;
   }
 
   innen() {
-    // Der korrekte Pfad: 3 → 9 → 81 → 243 → 81 → 9 → 3
-    if (this.a81 === 3) this.a81 = 9;
-    else if (this.a81 === 9) this.a81 = 81;
-    else if (this.a81 === 81) this.a81 = 243;
-    else if (this.a81 === 243) this.a81 = 81;
-    else if (this.a81 === 729) this.a81 = 243; // Fallback, falls mal 729
-    else this.a81 = 3; // Sicherheitsfall
-  }
-
-  nano() {
-    return this.a81 / 9;
-  }
-
-  rein() {
-    return Math.sqrt(this.a81);
-  }
-
-  impuls() {
-    return this.step % 2 === 0 ? "KUCK" : "KUCK-KUCK";
+    this.pfadIndex = (this.pfadIndex + 1) % this.pfad.length;
+    state.a81 = this.pfad[this.pfadIndex];
   }
 
   tick() {
-    this.zahnrad = (this.zahnrad + 1) % 12;
+    state.zahnrad = (state.zahnrad + 1) % 12;
   }
 
-  transwarp() {
-    MassHWTranswarp.set(
-      this.nano(),
-      this.rein(),
-      TimeHW.delta
-    );
-    MassHWTranswarp.compute();
-  }
-
-  pipeline(axis) {
-    Pipeline9.useA81({
-      pipe9: axis.pipe9,
-      a81: this.a81,
-      nano: this.nano(),
-      rein: this.rein(),
-      impuls: this.impuls(),
-      zahnrad: this.zahnrad
-    });
-  }
-
-  tele() {
-    return messen();
-  }
-
-  run(axis) {
+  run() {
     this.innen();
     this.tick();
-    this.transwarp();
-    this.pipeline(axis);
-// RUN 21 – Achse + Potenz synchronisieren
-const POTENZEN = [1, 3, 9, 27, 81, 243, 729];
-this.potenz = POTENZEN[this.step % POTENZEN.length];
-this.axis = ["d","e","i","n","o","r","s","u","w"][this.step % 9];
 
-    // Globalen State aktualisieren
-    state.a81 = this.a81;
-    state.zahnrad = this.zahnrad;
+    const POTENZEN = [1,3,9,27,81,243,729];
+    state.potenz = POTENZEN[state.step % POTENZEN.length];
+
+    const AXIS = ["d","e","i","n","o","r","s","u","w"];
+    state.axis = AXIS[state.step % AXIS.length];
+
+    state.nano = (state.a81 / 9).toFixed(2);
+    state.rein = Math.sqrt(state.a81).toFixed(2);
+    state.impuls = state.step % 2 === 0 ? "KUCK" : "KUCK-KUCK";
+
+    const now = performance.now();
+    state.delta = (now - lastTime).toFixed(0);
+    lastTime = now;
+
     state.step++;
-
-    // IQQ ableiten: 9 wenn A81 ungerade Potenz, sonst 3 (einfache Regel)
-    state.iqq = (this.a81 === 9 || this.a81 === 81 || this.a81 === 729) ? 9 : 3;
-    // TMP nach A81-Wert
-    state.tmp = this.a81 === 3 ? "Reset" :
-                this.a81 === 9 ? "Orbit" :
-                this.a81 === 81 ? "Stabil" :
-                this.a81 === 243 ? "Rär" : "Unbekannt";
-
-    return this.tele();
   }
 }
 
-// ================================================================
-// 4. Engine-Instanz (ONCE)
-// ================================================================
-const engine = new MCFLY_Engine();
+const engine = new RotationalEngine();
 
-// ================================================================
-// 5. Orbit‑Render & Display‑Update
-// ================================================================
-const SYMBOLS = ["◉", "◎", "◆", "△", "▣", "↺", "◉"];
-const PATH = [3, 9, 81, 243, 81, 9, 3];
+/* ============================================================
+   ORBIT RENDER
+============================================================ */
+function drawOrbit() {
+  const c = document.getElementById("orbitCanvas");
+  const ctx = c.getContext("2d");
+  ctx.clearRect(0,0,c.width,c.height);
 
-function drawOrbit(activeIndex) {
-  const c = document.getElementById('orbitCanvas');
-  const ctx = c.getContext('2d');
-  const cx = c.width/2, cy = c.height/2, r = 150;
-  ctx.clearRect(0, 0, c.width, c.height);
+  const cx = c.width/2;
+  const cy = c.height/2;
+  const r = 150;
 
-  const points = SYMBOLS.map((_, i) => {
-    const angle = (i / SYMBOLS.length) * 2 * Math.PI - Math.PI/2;
-    return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) };
-  });
+  const AXIS = ["d","e","i","n","o","r","s","u","w"];
 
-  ctx.strokeStyle = "#d5d9e0";
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  points.forEach((p, i) => {
-    const next = points[(i+1) % points.length];
-    ctx.moveTo(p.x, p.y);
-    ctx.lineTo(next.x, next.y);
-  });
-  ctx.stroke();
+  AXIS.forEach((a,i)=>{
+    const angle = (i / AXIS.length) * 2 * Math.PI - Math.PI/2;
+    const x = cx + r * Math.cos(angle);
+    const y = cy + r * Math.sin(angle);
 
-  points.forEach((p, i) => {
-    const active = (i === activeIndex);
+    const active = (a === state.axis);
+
     ctx.beginPath();
-    ctx.arc(p.x, p.y, active ? 26 : 18, 0, 2 * Math.PI);
+    ctx.arc(x,y, active ? 26 : 18, 0, 2*Math.PI);
     ctx.fillStyle = active ? "#1c2230" : "#fff";
     ctx.fill();
     ctx.strokeStyle = active ? "#1c2230" : "#c5cad3";
@@ -322,110 +232,76 @@ function drawOrbit(activeIndex) {
     ctx.font = "600 16px sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(SYMBOLS[i], p.x, p.y - 6);
-
-    ctx.font = "500 11px sans-serif";
-    ctx.fillStyle = active ? "#fff" : "#5a6478";
-    ctx.fillText(PATH[i], p.x, p.y + 10);
+    ctx.fillText(a, x, y);
   });
 }
 
-function updateDisplay(tele) {
-  document.getElementById('a81Display').textContent = state.a81;
-  document.getElementById('zahnradDisplay').textContent = state.zahnrad;
-  document.getElementById('stepDisplay').textContent = state.step;
-  document.getElementById('nanoDisplay').textContent = (state.a81 / 9).toFixed(2);
-  document.getElementById('reinDisplay').textContent = Math.sqrt(state.a81).toFixed(2);
-  document.getElementById('impulsDisplay').textContent = state.step % 2 === 0 ? "KUCK" : "KUCK-KUCK";
-  document.getElementById('deltaDisplay').textContent = tele ? tele.delta.toFixed(0) : 0;
-  document.getElementById('iqqDisplay').textContent = state.iqq;
-  document.getElementById('tmpDisplay').textContent = state.tmp;
-  document.getElementById('scanDisplay').textContent = state.scan;
+/* ============================================================
+   DISPLAY
+============================================================ */
+function updateDisplay() {
+  document.getElementById("a81Display").textContent = state.a81;
+  document.getElementById("zahnradDisplay").textContent = state.zahnrad;
+  document.getElementById("stepDisplay").textContent = state.step;
 
-  // Orbit-Fokus: Position im Pfad finden
-  const idx = PATH.indexOf(state.a81);
-  drawOrbit(idx >= 0 ? idx : 0);
+  document.getElementById("axisDisplay").textContent = state.axis;
+  document.getElementById("potenzDisplay").textContent = state.potenz;
+
+  document.getElementById("nanoDisplay").textContent = state.nano;
+  document.getElementById("reinDisplay").textContent = state.rein;
+  document.getElementById("impulsDisplay").textContent = state.impuls;
+  document.getElementById("deltaDisplay").textContent = state.delta;
+
+  drawOrbit();
 }
 
 function log(msg) {
-  const t = new Date().toLocaleTimeString('de-DE');
-  const box = document.getElementById('logBox');
+  const t = new Date().toLocaleTimeString("de-DE");
+  const box = document.getElementById("logBox");
   box.innerHTML = `[${t}] ${msg}<br>` + box.innerHTML;
-  if (box.children.length > 30) box.lastChild?.remove();
-  box.scrollTop = 0;
 }
 
-// ================================================================
-// 6. Engine‑Schritt (wird von Buttons und Loop aufgerufen)
-// ================================================================
-function engineStep() {
-  const axis = A81_AXIS.build();
-  const tele = engine.run(axis);
-  updateDisplay(tele);
-  log(`Step ${state.step}: A81=${state.a81}, Zahnrad=${state.zahnrad}, IQQ=${state.iqq}`);
-  return tele;
+/* ============================================================
+   LOOP
+============================================================ */
+let loop = null;
+
+function step() {
+  engine.run();
+  updateDisplay();
+  log(`Step ${state.step}: A81=${state.a81}, Axis=${state.axis}, Potenz=${state.potenz}`);
 }
 
-// ================================================================
-// 7. Loop‑Steuerung (start/stopp)
-// ================================================================
-let loopInterval = null;
-let loopActive = false;
+document.getElementById("stepBtn").onclick = step;
 
-function startLoop() {
-  if (loopActive) return;
-  loopActive = true;
-  document.getElementById('loopBtn').textContent = '▶ Loop läuft...';
-  // ersten Schritt sofort
-  engineStep();
-  loopInterval = setInterval(() => {
-    if (!loopActive) {
-      clearInterval(loopInterval);
-      return;
-    }
-    engineStep();
-  }, 500);
-}
+document.getElementById("loopBtn").onclick = ()=>{
+  if(loop) return;
+  loop = setInterval(step, 500);
+};
 
-function stopLoop() {
-  loopActive = false;
-  if (loopInterval) {
-    clearInterval(loopInterval);
-    loopInterval = null;
-  }
-  document.getElementById('loopBtn').textContent = '▶ Loop starten';
-  log('Loop gestoppt.');
-}
+document.getElementById("stopBtn").onclick = ()=>{
+  clearInterval(loop);
+  loop = null;
+};
 
-function resetSystem() {
-  stopLoop();
+document.getElementById("resetBtn").onclick = ()=>{
+  clearInterval(loop);
+  loop = null;
   state.a81 = 81;
   state.zahnrad = 0;
   state.step = 0;
-  state.iqq = 9;
-  state.tmp = "Stabil";
-  state.scan = "READY";
-  // Engine-Instanz zurücksetzen (nur für nächsten Schritt)
-  engine.a81 = state.a81;
-  engine.zahnrad = state.zahnrad;
-  engine.step = state.step;
-  updateDisplay(null);
-  log('Reset → zurück zu 81.');
-}
+  state.axis = "-";
+  state.potenz = "-";
+  state.nano = "-";
+  state.rein = "-";
+  state.impuls = "-";
+  state.delta = 0;
+  updateDisplay();
+  log("Reset → zurück zu 81.");
+};
 
-// ================================================================
-// 8. Event‑Binding
-// ================================================================
-document.getElementById('stepBtn').addEventListener('click', engineStep);
-document.getElementById('loopBtn').addEventListener('click', startLoop);
-document.getElementById('stopBtn').addEventListener('click', stopLoop);
-document.getElementById('resetBtn').addEventListener('click', resetSystem);
-
-// ================================================================
-// 9. Initialer Start
-// ================================================================
-updateDisplay(null);
-log('ALL NATURA · MCFLY_Engine geladen. Pfad: 3→9→81→243→81→9→3');
+updateDisplay();
+log("Rotational Engine gestartet.");
 </script>
 </body>
 </html>
