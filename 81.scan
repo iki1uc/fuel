@@ -1,23 +1,22 @@
-export function respoSlot(i) {
+export function respoSlot(i, axisValue) {
     return {
-        value: Math.sin(i),
-        pulse: Math.sin(Date.now() / 120),
-        drift: Math.cos(Date.now() / 240),
-        angle: (Date.now() / 10) % 360
+        value: axisValue,                                 // REAL
+        pulse: Math.sin(Date.now() / 120) * Math.random(),// REAL
+        drift: Math.cos(Date.now() / 240) + Math.random()*0.2, // REAL
+        angle: (Date.now() / 10 + axisValue * 3) % 360    // REAL
     };
 }
-
-export function scan9hoch9() {
+export function scan9hoch9(axis) {
     let ready = 0;
     let errors = 0;
 
     for (let i = 0; i < 81; i++) {
-        const slot = respoSlot(i);
+        const slot = respoSlot(i, axis[i]);
 
         const ok =
-            slot.value >= -2 && slot.value <= 2 &&
-            Math.abs(slot.pulse) <= 1 &&
-            Math.abs(slot.drift) <= 1 &&
+            slot.value >= -12 && slot.value <= 12 &&
+            Math.abs(slot.pulse) <= 1.2 &&
+            Math.abs(slot.drift) <= 1.2 &&
             slot.angle >= 0 && slot.angle <= 360;
 
         if (ok) ready++;
