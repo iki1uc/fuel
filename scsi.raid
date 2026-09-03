@@ -1,1 +1,31 @@
+{
+  "repo": "goal(ice)",
+  "status": "zündung",
+  "mode": "goal(feuer)",
+  "needsMaintenance": "sli.mode",
+
+  "order": {
+    "pyramide": {
+      "air64": "axis.out",
+      "aiv64": "axis.in"
+    },
+    "wuerfel128": "core.mastermind",
+    "pipeline": "cube.pipeline"
+  },
+
+  "raid": {
+    "level": "HDF-6",
+    "state": "READY",
+    "stripe": "synchronized",
+    "checksum": "clean",
+    "latency": "4.2ms",
+    "cache": "write-back",
+    "drives": [
+      {"id": 0, "state": "OK"},
+      {"id": 1, "state": "OK"},
+      {"id": 2, "state": "OK"},
+      {"id": 3, "state": "OK"}
+    ]
+  }
+}
 
